@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang="it">
+<style>
+.codde{
+	background-color: #ADABAB;
+	outline: black solid;
+	text-align: left;
+}
+</style>
+<head>
+	<title>Shower Presentation Engine with Mozilla Theme</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=792, user-scalable=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<link rel="stylesheet" href="shower/themes/mozilla/styles/style.css">
+</head>
+<body class="list">
+	<header class="caption">
+        <h1>Presentazione: ThreeJS e asm.js </h1><p>Vimercate - 16 Gennaio</p>
+	</header>
+<section class="slide" style="background-color:#D7D3C8;" id="Cover"><div>
+       	<h2 style="text-align:center;"> PRESENTAZIONE RELATORI</h2>
+	</div>
+</section>	
+
+	<section class="slide red">
+	<div>
+		<h2> Three.js </h2>
+		<li> Infinite applicazioni: non solo rendering 3D ma anche animazioni </li>
+		<li> prestazioni superiori rispetto al canvas base di HTML </li>
+		<li> E' un'API cross-browser basata su WebGL per renderizzare scene in 3D.</li>
+		<li> Ad alto livello </li>
+	</div>
+	</section>
+
+<section class="slide">
+	<iframe style="width:100%; height:100%;" src="http://threejs.org/examples/webgl_geometry_minecraft.html"></iframe>
+</section>
+
+<section class = "slide">
+	<div>
+		<h2> Vediamo quanto è difficile! </h2>
+		<code>
+var textures = [];<br>
+textures["tetto"] = new THREE.ImageUtils.loadTexture("./media/top.png",null,null);<br>
+textures["lato"] = new THREE.ImageUtils.loadTexture("./media/lato.png",null,null);<br>
+textures["erba"] = new THREE.ImageUtils.loadTexture("./media/tall_grass.png",null,null);<br>
+textures["plato"] = new THREE.ImageUtils.loadTexture("./media/primolato.png",null,null);<br>
+
+//Step 0: creo camera e renderer<br>
+var scene = new THREE.Scene();<br>
+scene.fog=new THREE.Fog( 0x000000, 1,20 );<br>
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight,0.1, 1000 ); <br>
+camera.position.set(10,5,10);<br>
+var renderer = new THREE.WebGLRenderer();<br>
+renderer.setSize( window.innerWidth, window.innerHeight );<br>
+document.body.appendChild( renderer.domElement );<br>
+		</code>
+	</div>
+</section>
+
+<section class="slide red" ><div>
+	<h2 class="center">Domande?</h2>
+	<figure class="frame place swing mypanda">
+	<img src="pictures/redpanda.jpg" alt="Red panda (Firefox)">
+	</figure>
+	<p style="position:absolute; bottom:10%;"> Never say No to a (<text style="color:red;">red</text>) <strong>Panda</strong>
+</div></section>
+
+
+
+<div class="progress"><div></div></div>
+<script src="shower/scripts.js"></script>
+</body>
+</html>
