@@ -8,7 +8,7 @@ textures["plato"] = new THREE.ImageUtils.loadTexture("./media/primolato.png",nul
 //Step 0: creo camera e renderer
 var scene = new THREE.Scene();
 scene.fog=new THREE.Fog( 0x000000, 1,20 );
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 20 );
 camera.position.set(10,5,10);
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -19,31 +19,41 @@ var hterreno=[];
 for(i=0; i<32; i++){
 	hterreno[i] = [];
 	for(j=0; j<32; j++){
-		hterreno[i][j]= (Math.random()*100)%6|0;
+		hterreno[i][j]= (Math.random()*100)%3|0;
 	}
 }
+
+
 
 //Step 2: preparo la funzione per aggiungere l'erba
 
 function grass(x,z){
-	var geometry = new THREE.PlaneGeometry(1.46,1.46,1,46);
+	var geometry = new THREE.PlaneGeometry(1.4 , 1.4);
 	var material = new THREE.MeshBasicMaterial({map:textures["erba"],transparent:true, side: THREE.DoubleSide});
 	var mesh = new THREE.Mesh(geometry,material);
 
 	var mesh2 = mesh.clone();
 
 	mesh.rotation.y=Math.PI/4;
-	mesh.position.set(x,hterreno[z][x],z);
+	mesh.position.set(x,hterreno[z][x]+1,z);
 	mesh2.rotation.y=-Math.PI/4;
-	mesh2.position.set(x,hterreno[z][x],z);
+	mesh2.position.set(x,hterreno[z][x]+1,z);
 	scene.add(mesh);
 	scene.add(mesh2);
 }
+function metto_erba(x,z){
+	k=Math.random()*100|0;
+	if(k>=75){
+		grass(x,z);
+	}
 
-//Step 3: preparo la funzione per aggiungere i tetti e i MeshLambertMaterial
+}
+
+
+//Step 3: preparo la funzione per aggiungere i tetti
 function tetto(x,z){
-	var geometry = new THREE.PlaneBufferGeometry(1,1,1);
-	var material = new THREE.MeshBasicMaterial({map:textures["tetto"],transparent:true, side: THREE.DoubleSide});
+	var geometry = new THREE.PlaneGeometry(1,1,1);
+	var material = new THREE.MeshBasicMaterial({map:textures["tetto"], side: THREE.DoubleSide});
 	var mesh = new THREE.Mesh(geometry,material);
 
 	mesh.rotation.x=Math.PI/2;
@@ -51,26 +61,20 @@ function tetto(x,z){
 	scene.add(mesh);
 }
 
-for(i=0; i<32;i++){
-	for(j=0; j<32;j++){
-		tetto(j,i);
-		lato(j,i,hterreno[i][j]);
-	}
-}
-
+//Step 4: e ora i lati
 function creaLato(textureName){
-	var geometry = new THREE.PlaneBufferGeometry(1,1,1);
-	var material = new THREE.MeshBasicMaterial({map:textures[textureName],transparent:true, side: THREE.DoubleSide});
+	var geometry = new THREE.PlaneGeometry(1,1,1);
+	var material = new THREE.MeshBasicMaterial({map:textures[textureName], side: THREE.DoubleSide});
 	var mesh = new THREE.Mesh(geometry,material);	
 	return mesh;
 }
 
 function lato(x,z,altezzaCorrente){
-	//controllo a est
-	nomeTexture="lato"
-	if(altezzaCorrente==hterreno[z][x]){
+	nomeTexture="lato";//voglio distinguere tra lati terminali (con in cima l'erba) e lati di sola terra
+	if(altezzaCorrente==hterreno[z][x]){ 
 		nomeTexture = "plato";
 	}
+	//controllo a est
 	if(x>0){
 		if(hterreno[z][x-1]<altezzaCorrente){
 			mesh=creaLato(nomeTexture);
@@ -79,7 +83,6 @@ function lato(x,z,altezzaCorrente){
 			scene.add(mesh);
 		}
 	}
-	
 	//controllo a sud
 	if(z<31 && hterreno[z+1][x]<altezzaCorrente){
 			mesh=creaLato(nomeTexture);
@@ -98,17 +101,32 @@ function lato(x,z,altezzaCorrente){
 			mesh.position.set(x+0.5,altezzaCorrente,z);
 			scene.add(mesh);		
 	}	
-	if(altezzaCorrente>=0)
+	if(altezzaCorrente>=0)	//ora vado al cubetto sotto a fare lo stesso controllo (in modo che non ci siano cubi a mezz'aria!)
 		lato(x,z,altezzaCorrente-1);
 
 }
 
+//Step 5
+//il motore di tutto
 function render() {
 	requestAnimationFrame( render );
 	renderer.render( scene, camera );
 }
 render();
-//Step 4: l'input.
+
+
+//Metto insieme tutto!
+for(i=0; i<32;i++){
+	for(j=0; j<32;j++){
+		tetto(j,i);
+		lato(j,i,hterreno[i][j]);
+		metto_erba(j,i);
+	}
+}
+
+
+
+//Step 6: l'input.
 
 function mouse_position(e){
 	mx = e.clientX;
